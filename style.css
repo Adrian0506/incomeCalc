@@ -1,3 +1,14 @@
 body {
     background-color: #DCDCDC
 }
+
+.__nextList {
+    position: relative;
+    left: 50rem
+}
+
+
+.__expense {
+    position: relative;
+    left:50rem;
+}
