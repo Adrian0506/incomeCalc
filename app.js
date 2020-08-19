@@ -4,10 +4,10 @@
 
 var budgetController = (function () {
 
-var expenseVal = function (values,description) {
+var expenseVal = function (values,description, type) {
    this.values = values;
    this.description = description;
-
+   this.type = type;
 }
 
 expenseVal.prototype.getValues = function () {
@@ -19,15 +19,23 @@ expenseVal.prototype.getDesc = function () {
     return this.description
 }
 
+expenseVal.prototype.getType = function () {
+    return this.type
+}
+
+
 return {
-    getExpense: function (value, description) {
+    
+    getExpense: function (value, description, type) {
       var addItem;
-        addItem = new expenseVal(value, description);
-        return addItem.getValues();
+        addItem = new expenseVal(value, description,type);
+        console.log(addItem)   
+       return addItem
+       
     },
-   getValue: function (value, description) {
-       newDesc = new expenseVal(value, description)  
-       console.log(value)  
+   getValue: function (value, description,type) {
+       newDesc = new expenseVal(value, description,type)  
+       console.log(addItem.getDesc());  
        return value; 
    }
 }
@@ -49,22 +57,32 @@ var UIController = (function (){
      }
 
 
+
 })();
 
 
  var appController = (function (UICTRL,budgetCtrl) {
-      var ctrlAddItem = function () {
-       var total = 0;
-        var type = UIController.getInput().type
-       if (type === 'exp') {
-        document.getElementById('__expense').innerHTML += budgetCtrl.getExpense(UIController.getInput().value)
-        document.getElementById('__expense').innerHTML += ' ' + budgetCtrl.getValue(UIController.getInput().description)
-} else if (type === 'inc') {
-        document.getElementById('__income').innerHTML += budgetCtrl.getExpense(UIController.getInput().value)
-        document.getElementById('__income').innerHTML += budgetCtrl.getExpense(UIController.getInput().description)
-
-}
+    var html = '<ul>%income%</ul>';
+    var htmlNew = '%income%';
+    var ctrlAddItem = function () {
+     var type = UIController.getInput().type  
+      var newItem = budgetCtrl.getExpense(UIController.getInput().value, UIController.getInput().description, UIController.getInput().type);
+      if (type === 'inc') {
+           html = html.replace(htmlNew, newItem.values + ' ' + newItem.description);
+         console.log(newItem.values)
+          document.querySelector('.__list').insertAdjacentHTML('beforeend', html)
+          htmlNew = newItem.values + ' ' + newItem.description
+ 
+      } else if (type === 'exp' ) {
+        html = html.replace(htmlNew,  newItem.values + ' ' + newItem.description);
+        console.log(newItem.values)
+         document.querySelector('.__nextList').insertAdjacentHTML('beforeend', html)
+         htmlNew = newItem.values + ' ' + newItem.description
+      } 
+  
     }
+ 
+
 
     var ctrlDeleteItem = function () {
        if (document.getElementById('.add__type') === '-') {
@@ -72,25 +90,14 @@ var UIController = (function (){
        }
     }
 
-var updateBalance = function () {
-   var income = parseInt(document.querySelector('__balance').value);
-   if (income < 0) {
-       return 0;
-   } else {
-       
-   }
-}
 
 
 document.addEventListener('keydown', function (e) {
    if (e.keyCode === 13) {
       ctrlAddItem()
-      updateBalance();
   }
 
-document.addEventListener('keydown', function () {
-      budgetCtrl.getExpense(UIController.getInput().value)
-});
+
 
 });
 
